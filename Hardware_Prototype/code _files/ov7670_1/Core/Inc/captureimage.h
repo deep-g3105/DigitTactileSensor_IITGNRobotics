@@ -1,0 +1,1 @@
+void Capture_Image(void);

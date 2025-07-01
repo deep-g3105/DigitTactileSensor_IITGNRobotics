@@ -1,0 +1,83 @@
+import serial
+import numpy as np
+import cv2
+import time
+
+PORT = 'COM11'  # Update with your COM port
+BAUD = 2000000
+WIDTH = 320
+HEIGHT = 240
+EXPECTED_SIZE = WIDTH * HEIGHT
+
+# Frame markers
+FRAME_START = 0xAA
+FRAME_END = 0xBB
+
+ser = serial.Serial(PORT, BAUD, timeout=0.5)
+print(f"Connected to {ser.name}")
+
+frame_buffer = bytearray()
+last_frame_time = time.time()
+
+while True:
+    # Read all available bytes
+    data = ser.read(ser.in_waiting or 1)
+    if not data:
+        continue
+        
+    frame_buffer.extend(data)
+    
+    # Find start marker
+    start_idx = frame_buffer.find(bytes([FRAME_START]))
+    if start_idx == -1:
+        frame_buffer.clear()
+        continue
+        
+    # Remove any preceding bytes
+    if start_idx > 0:
+        frame_buffer = frame_buffer[start_idx:]
+        
+    # Check if we have enough data (start + 2 length bytes + frame + end)
+    if len(frame_buffer) < 4:
+        continue
+        
+    # Extract frame length
+    frame_len = (frame_buffer[1] << 8) | frame_buffer[2]
+    
+    # Check if full frame is available
+    if len(frame_buffer) < frame_len + 4:
+        continue
+        
+    # Verify end marker
+    if frame_buffer[3 + frame_len] != FRAME_END:
+        print("Frame end marker missing! Discarding...")
+        frame_buffer = frame_buffer[3 + frame_len:]
+        continue
+    
+    # Extract frame data
+    frame_data = frame_buffer[3:3+frame_len]
+    frame_buffer = frame_buffer[4 + frame_len:]  # Remove processed frame
+    
+    # Validate frame size
+    if len(frame_data) != EXPECTED_SIZE:
+        print(f"Unexpected frame size: {len(frame_data)} vs {EXPECTED_SIZE}")
+        continue
+    
+    # Calculate FPS
+    current_time = time.time()
+    fps = 1 / (current_time - last_frame_time)
+    last_frame_time = current_time
+    
+    # Process image
+    img = np.frombuffer(frame_data, dtype=np.uint8).reshape((HEIGHT, WIDTH))
+    
+    # Display with FPS counter
+    cv2.putText(img, f"FPS: {fps:.1f}", (10, 20), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.imshow("OV7670 Grayscale Feed", img)
+    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+ser.close()
+cv2.destroyAllWindows()
