@@ -3,7 +3,6 @@
 ## Overview
 This is a prototype tactile sensor inspired by Meta’s DIGIT, designed to explore touch sensing using simple, affordable components. The system uses a Raspberry Pi Camera V2, RGB LEDs, and a 15A elastomer layer with printed markers to visualize and measure contact deformation.
 
-The goal is to perform normal and shear force estimation by tracking marker displacements during physical interactions.
 
 ## 🔧 Hardware Summary
 Component	Description
