@@ -29,9 +29,9 @@ All CAD and manufacturing files needed to build the sensor are included in this 
 
 ### 📁 Folder Overview:
 
-| Folder           | Description                                                           |
-| ---------------- | --------------------------------------------------------------------- |
-| `Casing/`        | Main 3D model of the sensor body and housing (SolidWorks + STL)       |
-| `acrylic_piece/` | Cutout design for the transparent top layer (acrylic faceplate)       |
-| `gel_moulds/`    | Moulds used for casting the elastomer layer (15 Shore A silicone)     |
-| `Demo/`          | Video representing Hardware Demo of prototype                         |     
+| Folder                                    | Description                                                           |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| `Hardware_Prototype/Casing/`              | Main 3D model of the sensor body and housing (SolidWorks + STL)       |
+| `Hardware_Prototype/acrylic_piece/`       | Cutout design for the transparent top layer (acrylic faceplate)       |
+| `Hardware_Prototype/gel_moulds/`          | Moulds used for casting the elastomer layer (15 Shore A silicone)     |
+| `Hardware_Prototype/Demo/`                | Video representing Hardware Demo of prototype                         |     
